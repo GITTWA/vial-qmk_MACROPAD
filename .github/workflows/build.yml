@@ -17,19 +17,35 @@ jobs:
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
 
-          # 1. Rinomina la cartella in tutto minuscolo se ha maiuscole
+          # 1. Rinomina in minuscolo se necessario
           if [ -d "keyboards/handwired/MacroWalPad" ]; then
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
 
-          # 2. Rimuove VIAL_ENABLE dal rules.mk principale (evita l'errore del validatore)
+          # 2. Ripulisce rules.mk principale
           sed -i '/VIAL_ENABLE/d' keyboards/handwired/macrowalpad/rules.mk
 
-          # 3. Assicura che VIAL sia abilitato nel keymap dedicato
+          # 3. Abilita Vial nel keymap
           mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
           printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
 
-          # 4. Compila il firmware
+          # 4. Scrive la carta d'identità USB e l'UID in config.h
+          cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/config.h
+          #pragma once
+
+          #define VENDOR_ID       0xFEED
+          #define PRODUCT_ID      0x6060
+          #define DEVICE_VER      0x0001
+          #define MANUFACTURER    "Wal"
+          #define PRODUCT         "MacroWalPad"
+
+          #define VIAL_KEYBOARD_UID {0x4D, 0x57, 0x8A, 0x21, 0x9C, 0xE3, 0x7B, 0x14}
+
+          #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
+          #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
+          EOF
+
+          # 5. Compila definitivamente
           make handwired/macrowalpad:vial
 
       - name: Salva UF2
