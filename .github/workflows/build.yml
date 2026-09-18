@@ -21,12 +21,12 @@ jobs:
           sed -i 's/ast\.Num/ast.Constant/g' lib/python/qmk/math.py
           sed -i 's/node\.n/node.value/g' lib/python/qmk/math.py
 
-          # 2. Rinomina in minuscolo
+          # 2. Rinomina cartella in minuscolo
           if [ -d "keyboards/handwired/MacroWalPad" ]; then
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
 
-          # 3. Configura rules.mk
+          # 3. rules.mk hardware
           cat << 'EOF' > keyboards/handwired/macrowalpad/rules.mk
           MCU = RP2040
           BOOTLOADER = rp2040
@@ -34,13 +34,58 @@ jobs:
           LTO_ENABLE = yes
           EOF
 
-          # 4. Scrive la matrice hardware con il NUOVO ORDINE DELLE COLONNE
+          # 4. info.json: 2 righe future in alto (y=0, y=1) e blocco 4x4 in basso (da y=2.5)
+          cat << 'EOF' > keyboards/handwired/macrowalpad/info.json
+          {
+              "keyboard_name": "MacroWalPad",
+              "manufacturer": "Wal",
+              "processor": "RP2040",
+              "bootloader": "rp2040",
+              "layouts": {
+                  "LAYOUT": {
+                      "layout": [
+                          {"matrix": [4, 0], "x": 0, "y": 0},
+                          {"matrix": [4, 1], "x": 1, "y": 0},
+                          {"matrix": [4, 2], "x": 2, "y": 0},
+                          {"matrix": [4, 3], "x": 3, "y": 0},
+
+                          {"matrix": [5, 0], "x": 0, "y": 1},
+                          {"matrix": [5, 1], "x": 1, "y": 1},
+                          {"matrix": [5, 2], "x": 2, "y": 1},
+                          {"matrix": [5, 3], "x": 3, "y": 1},
+
+                          {"matrix": [0, 0], "x": 0, "y": 2.5},
+                          {"matrix": [0, 1], "x": 1, "y": 2.5},
+                          {"matrix": [0, 2], "x": 2, "y": 2.5},
+                          {"matrix": [0, 3], "x": 3, "y": 2.5},
+
+                          {"matrix": [1, 0], "x": 0, "y": 3.5},
+                          {"matrix": [1, 1], "x": 1, "y": 3.5},
+                          {"matrix": [1, 2], "x": 2, "y": 3.5},
+                          {"matrix": [1, 3], "x": 3, "y": 3.5},
+
+                          {"matrix": [2, 0], "x": 0, "y": 4.5},
+                          {"matrix": [2, 1], "x": 1, "y": 4.5},
+                          {"matrix": [2, 2], "x": 2, "y": 4.5},
+                          {"matrix": [2, 3], "x": 3, "y": 4.5},
+
+                          {"matrix": [3, 0], "x": 0, "y": 5.5},
+                          {"matrix": [3, 1], "x": 1, "y": 5.5},
+                          {"matrix": [3, 2], "x": 2, "y": 5.5},
+                          {"matrix": [3, 3], "x": 3, "y": 5.5}
+                      ]
+                  }
+              }
+          }
+          EOF
+
+          # 5. config.h: righe e colonne orientate correttamente
           cat << 'EOF' > keyboards/handwired/macrowalpad/config.h
           #pragma once
 
           #define MATRIX_ROWS 6
           #define MATRIX_COLS 4
-          #define MATRIX_ROW_PINS { GP2, GP3, GP4, GP5, GP6, GP7 }
+          #define MATRIX_ROW_PINS { GP5, GP4, GP3, GP2, GP6, GP7 }
           #define MATRIX_COL_PINS { GP10, GP11, GP9, GP8 }
           #define DIODE_DIRECTION COL2ROW
 
@@ -51,7 +96,7 @@ jobs:
           #define PRODUCT         "MacroWalPad"
           EOF
 
-          # 5. Configura keymap Vial
+          # 6. Cartella keymaps/vial
           mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
           printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
 
@@ -64,7 +109,42 @@ jobs:
           #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
           EOF
 
-          # 6. Compila
+          # 7. vial.json: blocco 2x4 in ALTO, stacco, blocco 4x4 in BASSO
+          cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/vial.json
+          {
+            "name": "MacroWalPad",
+            "lighting": "none",
+            "matrix": {
+              "rows": 6,
+              "cols": 4
+            },
+            "layouts": {
+              "keymap": [
+                [
+                  "4,0", "4,1", "4,2", "4,3"
+                ],
+                [
+                  "5,0", "5,1", "5,2", "5,3"
+                ],
+                [
+                  {"y": 0.5},
+                  "0,0", "0,1", "0,2", "0,3"
+                ],
+                [
+                  "1,0", "1,1", "1,2", "1,3"
+                ],
+                [
+                  "2,0", "2,1", "2,2", "2,3"
+                ],
+                [
+                  "3,0", "3,1", "3,2", "3,3"
+                ]
+              ]
+            }
+          }
+          EOF
+
+          # 8. Compila
           make handwired/macrowalpad:vial
 
       - name: Salva UF2
