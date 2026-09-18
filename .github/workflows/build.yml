@@ -17,12 +17,16 @@ jobs:
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
 
-          # 1. Rinomina in minuscolo
+          # 1. Patch compatibilità per Python 3.14 (risolve ast.Num)
+          sed -i 's/ast\.Num/ast.Constant/g' lib/python/qmk/math.py
+          sed -i 's/node\.n/node.value/g' lib/python/qmk/math.py
+
+          # 2. Rinomina in minuscolo
           if [ -d "keyboards/handwired/MacroWalPad" ]; then
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
 
-          # 2. Configura rules.mk con la scheda Raspberry Pi Pico
+          # 3. Configura rules.mk per Raspberry Pi Pico
           cat << 'EOF' > keyboards/handwired/macrowalpad/rules.mk
           MCU = RP2040
           BOOTLOADER = rp2040
@@ -30,7 +34,7 @@ jobs:
           LTO_ENABLE = yes
           EOF
 
-          # 3. Scrive la matrice hardware nella cartella PRINCIPALE della tastiera
+          # 4. Scrive matrice hardware, pin e USB nel config.h principale
           cat << 'EOF' > keyboards/handwired/macrowalpad/config.h
           #pragma once
 
@@ -47,7 +51,7 @@ jobs:
           #define PRODUCT         "MacroWalPad"
           EOF
 
-          # 4. Configura la cartella keymaps/vial
+          # 5. Configura keymap Vial
           mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
           printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
 
@@ -60,7 +64,7 @@ jobs:
           #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
           EOF
 
-          # 5. Compila
+          # 6. Compila
           make handwired/macrowalpad:vial
 
       - name: Salva UF2
