@@ -17,7 +17,7 @@ jobs:
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
 
-          # 1. Rinomina in minuscolo se necessario
+          # 1. Rinomina in minuscolo
           if [ -d "keyboards/handwired/MacroWalPad" ]; then
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
@@ -29,23 +29,31 @@ jobs:
           mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
           printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
 
-          # 4. Scrive la carta d'identità USB e l'UID in config.h
+          # 4. Scrive matrice hardware, pin, USB e UID direttamente nel codice C
           cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/config.h
           #pragma once
 
+          /* Matrice Hardware e Pin del Raspberry Pi Pico */
+          #define MATRIX_ROWS 6
+          #define MATRIX_COLS 4
+          #define MATRIX_ROW_PINS { GP2, GP3, GP4, GP5, GP6, GP7 }
+          #define MATRIX_COL_PINS { GP8, GP9, GP10, GP11 }
+          #define DIODE_DIRECTION COL2ROW
+
+          /* Identità USB */
           #define VENDOR_ID       0xFEED
           #define PRODUCT_ID      0x6060
           #define DEVICE_VER      0x0001
           #define MANUFACTURER    "Wal"
           #define PRODUCT         "MacroWalPad"
 
+          /* Parametri Vial */
           #define VIAL_KEYBOARD_UID {0x4D, 0x57, 0x8A, 0x21, 0x9C, 0xE3, 0x7B, 0x14}
-
           #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
           #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
           EOF
 
-          # 5. Compila definitivamente
+          # 5. Compila
           make handwired/macrowalpad:vial
 
       - name: Salva UF2
