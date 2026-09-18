@@ -1,0 +1,25 @@
+name: Build MacroWalPad
+
+on: [push, workflow_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: ghcr.io/qmk/qmk_cli
+    steps:
+      - name: Scarica repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Compila firmware
+        run: |
+          qmk compile -kb handwired/macrowalpad -km vial
+
+      - name: Salva UF2
+        uses: actions/upload-artifact@v4
+        with:
+          name: macrowalpad_firmware
+          path: |
+            *.uf2
+            .build/*.uf2
