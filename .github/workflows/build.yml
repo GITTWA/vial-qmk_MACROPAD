@@ -12,11 +12,25 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Configura Git e Compila
+      - name: Prepara file e Compila
         run: |
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
-          make handwired/MacroWalPad:vial
+
+          # 1. Rinomina la cartella in tutto minuscolo se ha maiuscole
+          if [ -d "keyboards/handwired/MacroWalPad" ]; then
+            mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
+          fi
+
+          # 2. Rimuove VIAL_ENABLE dal rules.mk principale (evita l'errore del validatore)
+          sed -i '/VIAL_ENABLE/d' keyboards/handwired/macrowalpad/rules.mk
+
+          # 3. Assicura che VIAL sia abilitato nel keymap dedicato
+          mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
+          printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
+
+          # 4. Compila il firmware
+          make handwired/macrowalpad:vial
 
       - name: Salva UF2
         uses: actions/upload-artifact@v4
