@@ -1,4 +1,4 @@
-name: Build MacroWalPad
+name: Build MacroWalPadf
 
 on: [push, workflow_dispatch]
 
