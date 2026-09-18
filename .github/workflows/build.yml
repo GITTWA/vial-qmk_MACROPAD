@@ -12,9 +12,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Compila firmware
+      - name: Configura Git e Compila
         run: |
-          qmk compile -kb handwired/macrowalpad -km vial
+          git config --global --add safe.directory '*'
+          qmk config user.qmk_home=$(pwd)
+          make handwired/macrowalpad:vial
 
       - name: Salva UF2
         uses: actions/upload-artifact@v4
