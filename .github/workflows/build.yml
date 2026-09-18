@@ -17,7 +17,7 @@ jobs:
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
 
-          # 1. Patch compatibilità per Python 3.14 (risolve ast.Num)
+          # 1. Patch compatibilità Python 3.14
           sed -i 's/ast\.Num/ast.Constant/g' lib/python/qmk/math.py
           sed -i 's/node\.n/node.value/g' lib/python/qmk/math.py
 
@@ -26,7 +26,7 @@ jobs:
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
 
-          # 3. Configura rules.mk per Raspberry Pi Pico
+          # 3. Configura rules.mk
           cat << 'EOF' > keyboards/handwired/macrowalpad/rules.mk
           MCU = RP2040
           BOOTLOADER = rp2040
@@ -34,14 +34,14 @@ jobs:
           LTO_ENABLE = yes
           EOF
 
-          # 4. Scrive matrice hardware, pin e USB nel config.h principale
+          # 4. Scrive la matrice hardware con il NUOVO ORDINE DELLE COLONNE
           cat << 'EOF' > keyboards/handwired/macrowalpad/config.h
           #pragma once
 
           #define MATRIX_ROWS 6
           #define MATRIX_COLS 4
           #define MATRIX_ROW_PINS { GP2, GP3, GP4, GP5, GP6, GP7 }
-          #define MATRIX_COL_PINS { GP8, GP9, GP10, GP11 }
+          #define MATRIX_COL_PINS { GP10, GP11, GP9, GP8 }
           #define DIODE_DIRECTION COL2ROW
 
           #define VENDOR_ID       0xFEED
