@@ -22,32 +22,39 @@ jobs:
             mv keyboards/handwired/MacroWalPad keyboards/handwired/macrowalpad
           fi
 
-          # 2. Ripulisce rules.mk principale
-          sed -i '/VIAL_ENABLE/d' keyboards/handwired/macrowalpad/rules.mk
+          # 2. Configura rules.mk con la scheda Raspberry Pi Pico
+          cat << 'EOF' > keyboards/handwired/macrowalpad/rules.mk
+          MCU = RP2040
+          BOOTLOADER = rp2040
+          BOARD = GENERIC_RP_RP2040
+          LTO_ENABLE = yes
+          EOF
 
-          # 3. Abilita Vial nel keymap
-          mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
-          printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
-
-          # 4. Scrive matrice hardware, pin, USB e UID direttamente nel codice C
-          cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/config.h
+          # 3. Scrive la matrice hardware nella cartella PRINCIPALE della tastiera
+          cat << 'EOF' > keyboards/handwired/macrowalpad/config.h
           #pragma once
 
-          /* Matrice Hardware e Pin del Raspberry Pi Pico */
           #define MATRIX_ROWS 6
           #define MATRIX_COLS 4
           #define MATRIX_ROW_PINS { GP2, GP3, GP4, GP5, GP6, GP7 }
           #define MATRIX_COL_PINS { GP8, GP9, GP10, GP11 }
           #define DIODE_DIRECTION COL2ROW
 
-          /* Identità USB */
           #define VENDOR_ID       0xFEED
           #define PRODUCT_ID      0x6060
           #define DEVICE_VER      0x0001
           #define MANUFACTURER    "Wal"
           #define PRODUCT         "MacroWalPad"
+          EOF
 
-          /* Parametri Vial */
+          # 4. Configura la cartella keymaps/vial
+          mkdir -p keyboards/handwired/macrowalpad/keymaps/vial
+          printf "VIA_ENABLE = yes\nVIAL_ENABLE = yes\n" > keyboards/handwired/macrowalpad/keymaps/vial/rules.mk
+
+          cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/config.h
+          #pragma once
+          #include_next <config.h>
+
           #define VIAL_KEYBOARD_UID {0x4D, 0x57, 0x8A, 0x21, 0x9C, 0xE3, 0x7B, 0x14}
           #define VIAL_UNLOCK_COMBO_ROWS { 0, 0 }
           #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
