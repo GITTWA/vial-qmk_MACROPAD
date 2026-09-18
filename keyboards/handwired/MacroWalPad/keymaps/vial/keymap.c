@@ -14,10 +14,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         /* RIGA 3 (Attiva - GP5) */
         KC_P0, KC_PDOT, KC_BSPC, KC_ESC,
         
-        /* RIGA 4 (Futura - GP6) */
+        /* RIGA 4 (Predisposta per il futuro - GP6) */
         KC_NO, KC_NO,   KC_NO,   KC_NO,
         
-        /* RIGA 5 (Futura - GP7) */
+        /* RIGA 5 (Predisposta per il futuro - GP7) */
         KC_NO, KC_NO,   KC_NO,   KC_NO
     )
 };
