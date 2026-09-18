@@ -16,7 +16,7 @@ jobs:
         run: |
           git config --global --add safe.directory '*'
           qmk config user.qmk_home=$(pwd)
-          make handwired/macrowalpad:vial
+          make handwired/MacroWalPad:vial
 
       - name: Salva UF2
         uses: actions/upload-artifact@v4
@@ -25,3 +25,4 @@ jobs:
           path: |
             *.uf2
             .build/*.uf2
+            **/*.uf2
