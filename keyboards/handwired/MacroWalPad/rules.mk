@@ -1,9 +1,10 @@
-# Specifica l'architettura del chip (Raspberry Pi Pico)
+# Architettura e bootloader per Raspberry Pi Pico
 MCU = RP2040
 BOOTLOADER = rp2040
 
-# Attiva il motore di Vial per la configurazione dinamica
+# Attiva il supporto dinamico (necessari entrambi per Vial)
+VIA_ENABLE = yes
 VIAL_ENABLE = yes
 
-# Ottimizzazione dello spazio: comprime il firmware per farlo stare nel chip
+# Ottimizzazione del codice
 LTO_ENABLE = yes
