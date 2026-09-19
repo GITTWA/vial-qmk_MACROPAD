@@ -34,7 +34,7 @@ jobs:
           LTO_ENABLE = yes
           EOF
 
-          # 4. info.json: 2 righe future in alto (y=0, y=1) e blocco 4x4 in basso (da y=2.5)
+          # 4. info.json (layout 2x4 in alto, 4x4 in basso)
           cat << 'EOF' > keyboards/handwired/macrowalpad/info.json
           {
               "keyboard_name": "MacroWalPad",
@@ -79,7 +79,7 @@ jobs:
           }
           EOF
 
-          # 5. config.h: righe e colonne orientate correttamente
+          # 5. config.h: AUMENTO MACRO E SPAZIO MEMORIA
           cat << 'EOF' > keyboards/handwired/macrowalpad/config.h
           #pragma once
 
@@ -94,6 +94,10 @@ jobs:
           #define DEVICE_VER      0x0001
           #define MANUFACTURER    "Wal"
           #define PRODUCT         "MacroWalPad"
+
+          /* ESPANSIONE MACRO VIAL */
+          #define DYNAMIC_KEYMAP_MACRO_COUNT 64
+          #define DYNAMIC_KEYMAP_MACRO_EEPROM_SIZE 3072
           EOF
 
           # 6. Cartella keymaps/vial
@@ -109,7 +113,7 @@ jobs:
           #define VIAL_UNLOCK_COMBO_COLS { 0, 1 }
           EOF
 
-          # 7. vial.json: blocco 2x4 in ALTO, stacco, blocco 4x4 in BASSO
+          # 7. vial.json
           cat << 'EOF' > keyboards/handwired/macrowalpad/keymaps/vial/vial.json
           {
             "name": "MacroWalPad",
@@ -144,7 +148,7 @@ jobs:
           }
           EOF
 
-          # 8. Compila
+          # 8. Compilazione
           make handwired/macrowalpad:vial
 
       - name: Salva UF2
